@@ -1,0 +1,55 @@
+do
+$$
+declare cadena1 varchar(20);
+		cadena2 varchar(20);
+		longitud_cadena1 int;
+		longitud_cadena2 int;
+		contador int;
+		letra varchar(20);
+		sql text;
+		columna varchar(50);
+begin
+cadena1 :='nythia';
+select char_length(cadena1) into longitud_cadena1;
+contador =1;
+sql := 'create table nombre(';
+while contador <= longitud_cadena1
+loop 
+  select substring(cadena1 from contador for 1) into letra;
+  sql := sql||letra||contador||' int,';
+  contador := contador+1;
+end loop;
+
+sql:=substring(sql from 1 for char_length(sql)-1);
+sql:=sql||')';
+raise notice '%',sql;
+execute sql;
+
+
+cadena2 = 'nitia';
+select char_length(cadena2) into longitud_cadena2;
+contador =1;
+while contador <= longitud_cadena2
+loop 
+letra := LEFT(cadena2,1);
+cadena2 := RIGHT (cadena2,char_length(cadena2)-1);
+columna = (select column_name
+			from information_schema.columns
+			where TABLE_NAME ='nombre'
+			and left(COLUMN_NAME,1)=letra
+			and ordinal_position>=contador
+			LIMIT 1) ;
+			
+	sql = 'insert into nombre(' || columna || ')values(1)';
+	execute sql;
+	contador=contador+1;
+end loop;
+
+end;
+
+--drop table nombre;
+
+$$
+LANGUAGE plpgsql
+
+--select * from nombre
